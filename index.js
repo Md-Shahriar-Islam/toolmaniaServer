@@ -63,6 +63,12 @@ async function run() {
             const result = await orders.find(email).toArray()
             res.send(result)
         })
+        app.get('/orders/all', async (req, res) => {
+            const query = {}
+            const cursor = orders.find(query);
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         app.delete("/orders/:id", async (req, res) => {
             const id = req.params.id;
             console.log(id)
@@ -99,6 +105,17 @@ async function run() {
             const query = {}
             const cursor = profile.find(query);
             const result = await cursor.toArray()
+            res.send(result)
+        })
+        app.put('/profile/user', async (req, res) => {
+            const email = req.query
+            console.log(email)
+            const updateDoc = {
+                $set: {
+                    role: "admin"
+                }
+            };
+            const result = await profile.updateOne(email, updateDoc)
             res.send(result)
         })
 
