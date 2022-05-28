@@ -16,6 +16,7 @@ async function run() {
     try {
         await client.connect();
         const tools = client.db("toolstore").collection("tools");
+        const reviews = client.db("toolstore").collection("reviews");
         app.post('/tools', async (req, res) => {
             const data = req.body;
             const result = await tools.insertOne(data);
@@ -35,6 +36,12 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await tools.findOne(query)
             res.send(result)
+        })
+        app.post("/reviews", async (req, res) => {
+            const data = req.body;
+            const result = await reviews.insertOne(data);
+
+
         })
 
     }
