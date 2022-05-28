@@ -17,6 +17,8 @@ async function run() {
         await client.connect();
         const tools = client.db("toolstore").collection("tools");
         const reviews = client.db("toolstore").collection("reviews");
+        const orders = client.db("toolstore").collection("orders");
+        const profile = client.db("toolstore").collection("profile");
         app.post('/tools', async (req, res) => {
             const data = req.body;
             const result = await tools.insertOne(data);
@@ -49,6 +51,55 @@ async function run() {
             const result = await reviews.insertOne(data);
 
 
+        })
+        app.post("/orders", async (req, res) => {
+            const order = req.body
+            const result = await orders.insertOne(order);
+
+        })
+        app.get("/orders", async (req, res) => {
+            const email = req.query
+            console.log(email)
+            const result = await orders.find(email).toArray()
+            res.send(result)
+        })
+        app.delete("/orders/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await orders.deleteOne(query);
+            //console.log(result)
+            res.send(result)
+        })
+        app.post('/profile', async (req, res) => {
+            const user = req.body;
+            const result = await profile.insertOne(user)
+            res.send(result)
+        })
+        app.put('/profile', async (req, res) => {
+            const email = req.query
+            console.log(email)
+            const data = req.body
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: data
+            };
+            const result = await profile.updateOne(email, updateDoc, options)
+            res.send(result)
+        })
+        app.get('/profile/user', async (req, res) => {
+            const email = req.query
+            console.log(email)
+            const cursor = await profile.findOne(email);
+            console.log(cursor)
+            res.send(cursor)
+
+        })
+        app.get('/profile', async (req, res) => {
+            const query = {}
+            const cursor = profile.find(query);
+            const result = await cursor.toArray()
+            res.send(result)
         })
 
     }
